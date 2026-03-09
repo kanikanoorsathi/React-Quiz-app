@@ -1,6 +1,7 @@
 // import { useState } from "react";
 // import reactLogo from "./assets/react.svg";
 // import viteLogo from "/vite.svg";
+import { useState } from "react";
 import "./App.css";
 
 const Qustion = [
@@ -63,7 +64,23 @@ const Qustion = [
 
 function App() {
   // const [count, setCount] = useState(0);
-  const currentQuestion = Qustion[0];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selected, setSelected] = useState("");
+  const [useAnswers, setUserAnswers] = useState([]);
+  const currentQuestion = Qustion[currentIndex];
+
+  const handleNext = () => {
+    const isCorrect = selected === currentQuestion.Ans;
+    if (isCorrect) setScore((prev) => prev + 1);
+
+    setUserAnswers([...useAnswers, selected]);
+
+    setCurrentIndex((prev) => prev + 1);
+    setSelected("");
+  };
+  console.log({ selected, score });
+  const totalQuestions = Qustion.length;
 
   return (
     <>
@@ -73,13 +90,52 @@ function App() {
         </div>
       </div>
 
-      {/* Quiiz */}
-      <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
-        <div>
-          <h2 className="text-xl font-semibold my-4 leading-tight">
-            {currentQuestion.title}
-          </h2>
-          {currentQuestion.option.map((option)=> option)}
+      <div className="border border-indigo-200 w-2/6 mx-auto my-4 shadow-sm">
+        <div className="flex justify-between my-2 ">
+          <span className="font-bold">
+            Question {currentIndex + 1} of {totalQuestions}
+          </span>
+          <span className=" badge badge-outline">
+            {((currentIndex + 1) / totalQuestions) * 100}%
+          </span>
+        </div>
+        {/* Progress */}
+        <progress
+          className="progress progress-primary w-full"
+          value={currentIndex}
+          max={totalQuestions}
+        ></progress>
+
+
+        {/* Quiiz */}
+        <div className="min-h-screen bg-base-100 flex items-center justify-center">
+          {/* quiz-title */}
+          <div>
+            <h2 className="text-2xl font-bold leading-tight">
+              {currentQuestion.title}
+            </h2>
+            {/* quiz-options */}
+            <div className="grid grid-cols-1 gap-2 mt-8">
+              {currentQuestion.option.map((option) => (
+                <button
+                  className={`btn justify-start text-left text-base btn-primary h-auto py-4 px-6 ${selected === option ? "btn-primary" : "btn-outline"} `}
+                  onClick={() => setSelected(option)}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+            {/* Quiz-Next-Button */}
+            <div>
+              <button
+                className="btn btn-primary btn-block mt-8 text-base h-auto py-4 px-6"
+                onClick={handleNext}
+                disabled={!selected}
+              >
+                {currentIndex === totalQuestions -1 ? "Finish Quiz" : "Next Quiz ->"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </>
