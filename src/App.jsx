@@ -3,84 +3,50 @@
 // import viteLogo from "/vite.svg";
 import { useState } from "react";
 import "./App.css";
+import Qustion from "./data/Qustion";
+import ResultScreen from "./components/ResultScreen";
 
-const Qustion = [
-  {
-    title: "What is the capital of Bangladesh?",
-    option: ["Chittagong", "Dhaka", "Sylhet", "Khulna"],
-    Ans: "Dhaka",
-  },
-  {
-    title: "What is the national flower of Bangladesh?",
-    option: ["Rose", "Lotus", "Water Lily", "Sunflower"],
-    Ans: "Water Lily",
-  },
-  {
-    title: "What is the national animal of Bangladesh?",
-    option: ["Elephant", "Royal Bengal Tiger", "Lion", "Deer"],
-    Ans: "Royal Bengal Tiger",
-  },
-  {
-    title: "What is the national bird of Bangladesh?",
-    option: ["Dove", "Magpie Robin", "Parrot", "Crow"],
-    Ans: "Magpie Robin",
-  },
-  {
-    title: "Which river is the longest in Bangladesh?",
-    option: ["Padma", "Jamuna", "Meghna", "Brahmaputra"],
-    Ans: "Brahmaputra",
-  },
-  {
-    title: "In which year did Bangladesh gain independence?",
-    option: ["1969", "1971", "1975", "1981"],
-    Ans: "1971",
-  },
-  {
-    title: "Who is known as the Father of the Nation of Bangladesh?",
-    option: [
-      "Ziaur Rahman",
-      "Sheikh Mujibur Rahman",
-      "Hussain Muhammad Ershad",
-      "Tajuddin Ahmad",
-    ],
-    Ans: "Sheikh Mujibur Rahman",
-  },
-  {
-    title: "What is the national fruit of Bangladesh?",
-    option: ["Mango", "Jackfruit", "Banana", "Litchi"],
-    Ans: "Jackfruit",
-  },
-  {
-    title: "What is the currency of Bangladesh?",
-    option: ["Rupee", "Taka", "Riyal", "Dollar"],
-    Ans: "Taka",
-  },
-  {
-    title: "What is the national sport of Bangladesh?",
-    option: ["Football", "Kabaddi", "Cricket", "Hockey"],
-    Ans: "Kabaddi",
-  },
-];
+
 
 function App() {
   // const [count, setCount] = useState(0);
+  const [screen, setScreen] = useState("quiz")
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [selected, setSelected] = useState("");
-  const [useAnswers, setUserAnswers] = useState([]);
+  const [useAnswers, setUseAnswers] = useState([]);
+
   const currentQuestion = Qustion[currentIndex];
+  const totalQuestions = Qustion.length;
 
   const handleNext = () => {
     const isCorrect = selected === currentQuestion.Ans;
     if (isCorrect) setScore((prev) => prev + 1);
 
-    setUserAnswers([...useAnswers, selected]);
-
-    setCurrentIndex((prev) => prev + 1);
-    setSelected("");
+    setUseAnswers([...useAnswers, selected]);
+    if(currentIndex < totalQuestions -1){
+      setCurrentIndex((prev) => prev + 1);
+      setSelected("");
+    } else{
+      setScreen("result")
+    }
   };
   console.log({ selected, score });
-  const totalQuestions = Qustion.length;
+  const playAgain =() =>{
+    setScreen("quiz");
+    setCurrentIndex(0);
+    setScore(0);
+    setSelected("")
+    setUseAnswers([]);
+  }
+
+  // result screen
+
+  if(screen === "result"){
+    
+     return <ResultScreen score={score} totalQuestions={totalQuestions} useAnswers={useAnswers} playAgain={playAgain}></ResultScreen>
+  }
+  
 
   return (
     <>
@@ -90,8 +56,8 @@ function App() {
         </div>
       </div>
 
-      <div className="border border-indigo-200 w-2/6 mx-auto my-4 shadow-sm">
-        <div className="flex justify-between my-2 ">
+      <div className="border solid border-indigo-200 w-2/6 mx-auto my-4 shadow-xl">
+        <div className="flex justify-between my-2 p-4">
           <span className="font-bold">
             Question {currentIndex + 1} of {totalQuestions}
           </span>
@@ -108,7 +74,7 @@ function App() {
 
 
         {/* Quiiz */}
-        <div className="min-h-screen bg-base-100 flex items-center justify-center">
+        <div className="p-8 bg-base-100 flex items-center justify-center">
           {/* quiz-title */}
           <div>
             <h2 className="text-2xl font-bold leading-tight">
